@@ -72,7 +72,8 @@ def downloadYTFromLink(link, song_title):
     }
 
     # set provide the path using --ffmpeg-location
-    ydl_opts['ffmpeg_location'] = r'C:\ffmpeg\bin\ffmpeg.exe'
+    # ydl_opts['ffmpeg_location'] = r'C:\ffmpeg\bin\ffmpeg.exe'
+    ydl_opts['ffmpeg_location'] = r"/usr/bin/ffmpeg"
     ydl_opts['outtmpl'] = 'song'
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
