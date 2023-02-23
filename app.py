@@ -76,8 +76,12 @@ def downloadYTFromLink(link, song_title):
     ydl_opts['ffmpeg_location'] = r"/usr/bin/ffmpeg"
     ydl_opts['outtmpl'] = 'song'
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([link])
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([link])
+    except:
+        st.write("Error downloading song, try another link/song")
+        return
 
     # send song to user
     st.audio("song.mp3")
