@@ -4,6 +4,10 @@ st.title("Download Music :D")
 st.write("Choose between downloading a single song where you will be able to select the exact song you'd like or batch \
          downloading songs which wil default to the first result of the query from YouTube. Videos over 10mins long will \
          not be downloaded due to long load times.")
+st.write("")
+st.write("**Disclaimer**: This app is not affiliated with YouTube in any way. This app should only be used for personal \
+         use and not for commercial use, downloaded content should not be uploaded. This app is not responsible for \
+         any misuse or liabilities. \ By using this app, you agree to the above disclaimer.")
 st.write("**Note:** This app is still in development and may not work as expected. Please report any bugs to the \
          [GitHub repo](https://github.com/jolenechong/getMusic).")
 
