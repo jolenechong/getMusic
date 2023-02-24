@@ -242,7 +242,7 @@ if authenticated:
             if choice[0] !=0 and is_checkbox_filled():
                 # download song
                 st.write("Getting song... (wait for a download button to appear :D)")
-                downloadYTFromLink(options[choice[0]][2], options[choice[0]][0])
+                downloadYTFromLink(options[choice[0]][3], options[choice[0]][1])
 
     with batchDownload:
         st.subheader("Batch Download (defaults to first result of query)")
@@ -258,4 +258,4 @@ if authenticated:
 
                 # download song
                 st.write("Downloading song...")
-                downloadYTFromLink(options[0][2], options[0][0])
+                downloadYTFromLink(options[0][3], options[0][1])
