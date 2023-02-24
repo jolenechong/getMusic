@@ -206,12 +206,14 @@ if authenticated:
         if submit_button or is_checkbox_filled():
             if not is_checkbox_filled():
                 st.write("Retrieving search results...")
-                options = searchYouTube(search)
+                options = searchYouTube(search) # title, duration, link
+                options.insert(0, ("Select a song (disabled)", None, None))
+                options = [(idx, option[0], option[1], option[2]) for idx, option in enumerate(options)]
 
                 # get only the first item in the list of tuples
-                options_titles = [(None, "Select a song (disabled)")]
-                # add numbers from 0 and 1 to list as a tuple
-                options_titles.extend([(idx, option[1], option[0]) for idx, option in enumerate(options)])
+                options_titles = ["Select a song (disabled)"]
+                # add numbers from 0 and 1 to list as a tuple, skip first one
+                options_titles.extend([f"{idx+1}. {option[2]} ({option[1]})" for idx, option in enumerate(options[1:])])
 
                 st.session_state['options_titles'] = options_titles
                 st.session_state['options'] = options
@@ -221,18 +223,25 @@ if authenticated:
                 options_titles = st.session_state['options_titles']
                 options = st.session_state['options']
 
+            print(options)
+            print(options_titles)
+            
             # display options and get user input
-            choice = st.selectbox("Choose a song", options_titles)
+            choice = st.selectbox(
+                "Choose a song",
+                options,
+                format_func=lambda x: options_titles[x[0]]
+            )
+            print(choice)
 
-            # TODO: update selectbox to clean up display values 
             # TODO: fix >10mins songs arnt rlly ignored (they arnt, it only shows None for the timing)
 
             st.session_state['songSelection'] = choice
             print(choice[0])
 
-            if choice[0] is not None and is_checkbox_filled():
+            if choice[0] !=0 and is_checkbox_filled():
                 # download song
-                st.write("Downloading song...")
+                st.write("Getting song... (wait for a download button to appear :D)")
                 downloadYTFromLink(options[choice[0]][2], options[choice[0]][0])
 
     with batchDownload:
