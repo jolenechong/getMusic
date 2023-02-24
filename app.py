@@ -60,7 +60,7 @@ if check_password():
         with open(bin_file, 'rb') as f:
             data = f.read()
         bin_str = base64.b64encode(data).decode()
-        href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{song_title}">Download {song_title}</a>'
+        href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{song_title}.mp3">Download {song_title}</a>'
         return href
 
     def getDuration(label):
@@ -196,7 +196,7 @@ if check_password():
                 options = st.session_state['options']
 
             # display options and get user input
-            choice = st.selectbox("Choose a song (default selected first one)", options_titles)
+            choice = st.selectbox("Choose a song", options_titles)
 
             # TODO: update selectbox to clean up display values 
             # TODO: fix >10mins songs arnt rlly ignored (they arnt, it only shows None for the timing)
