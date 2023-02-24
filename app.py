@@ -2,7 +2,10 @@ import streamlit as st
 
 st.title("Download Music :D")
 st.write("Choose between downloading a single song where you will be able to select the exact song you'd like or batch \
-         downloading songs which wil default to the first result of the query from YouTube.")
+         downloading songs which wil default to the first result of the query from YouTube. Videos over 10mins long will \
+         not be downloaded due to long load times.")
+st.write("**Note:** This app is still in development and may not work as expected. Please report any bugs to the \
+         [GitHub repo](https://github.com/jolenechong/getMusic).")
 
 # set some spacing
 st.write("")
@@ -17,12 +20,40 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import yt_dlp
 import base64
+from datetime import timedelta
+import re
+
 def get_binary_file_downloader_html(bin_file, song_title):
     with open(bin_file, 'rb') as f:
         data = f.read()
     bin_str = base64.b64encode(data).decode()
     href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{song_title}">Download {song_title}</a>'
     return href
+
+def getDuration(label):
+    match = re.search(r'\b(\d+ minutes?, \d+ seconds)\b', label)
+    if match:
+        duration = match.group(1).split(", ")
+
+        if len(duration) > 2:
+            # there is an hour component which we will not be including for music videos due to long load times
+            # hours = int(duration[0].split(" ")[0])
+            # minutes = int(duration[1].split(" ")[0])
+            # seconds = int(duration[2].split(" ")[0])
+            return None
+        else:
+            minutes = int(duration[0].split(" ")[0])
+            seconds = int(duration[1].split(" ")[0])
+
+            # ensure under 10mins
+            if minutes < 10:
+                # Create timedelta object
+                duration = timedelta(minutes=minutes, seconds=seconds)
+
+                # Format as "MM:SS" string
+                duration_formatted = duration - timedelta(microseconds=duration.microseconds)
+                duration_str = str(duration_formatted)[2:]
+                return duration_str
 
 def searchYouTube(search):
     search = search.replace(" ", "+")
@@ -45,17 +76,21 @@ def searchYouTube(search):
     st.write("Getting songs...")
 
     html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "lxml")
 
     videos_soup = soup.find_all("a", id="video-title")
+    durations = [video['aria-label'] for video in videos_soup][:5]
+    durations = [getDuration(duration) for duration in durations]
+    print(durations)
+    # get links and titles of videos
     videos = []
 
-    for video in videos_soup[:5]: # only get top 5 results
+    for idx, video in enumerate(videos_soup[:5]): # only get top 5 results
         title = video["title"]
         link = "https://www.youtube.com" + video["href"]
 
         if "shorts" not in title:
-            videos.append((title, link))
+            videos.append((title, durations[idx], link))
 
     driver.quit()
 
@@ -69,6 +104,7 @@ def downloadYTFromLink(link, song_title):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
+        # 'geo_verification_proxy': 'http://proxy-server-singapore:8080', # TODO: need to replace this with a proxy server
     }
 
     # set provide the path using --ffmpeg-location
@@ -114,8 +150,9 @@ with downloadMusic:
 
             # get only the first item in the list of tuples
             options_titles = [(None, "Select a song (disabled)")]
-            # add numbers from 0 to list as a tuple
-            options_titles.extend(list(enumerate([option[0] for option in options])))
+            # add numbers from 0 and 1 to list as a tuple
+            options_titles.extend([(idx, option[1], option[0]) for idx, option in enumerate(options)])
+
             st.session_state['options_titles'] = options_titles
             st.session_state['options'] = options
         else:
@@ -125,8 +162,11 @@ with downloadMusic:
             options = st.session_state['options']
 
         # display options and get user input
-        # TOOD: ait for input, start from no selection :") AHAHA
         choice = st.selectbox("Choose a song (default selected first one)", options_titles)
+
+        # TODO: update selectbox to clean up display values 
+        # TODO: fix >10mins songs arnt rlly ignored (they arnt, it only shows None for the timing)
+
         st.session_state['songSelection'] = choice
         print(choice[0])
 
