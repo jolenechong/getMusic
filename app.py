@@ -147,6 +147,7 @@ if check_password():
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.cache.remove()
                 ydl.download([link])
         except:
             st.write("Error downloading song, try another link/song")
