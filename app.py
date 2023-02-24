@@ -206,7 +206,7 @@ if check_password():
             if choice[0] is not None and is_checkbox_filled():
                 # download song
                 st.write("Downloading song...")
-                downloadYTFromLink(options[choice[0]][1], options[choice[0]][0])
+                downloadYTFromLink(options[choice[0]][2], options[choice[0]][0])
 
     with batchDownload:
         st.subheader("Batch Download (defaults to first result of query)")
@@ -222,4 +222,4 @@ if check_password():
 
                 # download song
                 st.write("Downloading song...")
-                downloadYTFromLink(options[0][1], options[0][0])
+                downloadYTFromLink(options[0][2], options[0][0])
