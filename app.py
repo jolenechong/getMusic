@@ -1,4 +1,7 @@
 import streamlit as st
+from streamlit_javascript import st_javascript
+
+st.set_page_config(page_title="Music Downloader", page_icon="🎵")
 
 def check_password():
     """Returns `True` if the user had the correct password."""
@@ -28,7 +31,30 @@ def check_password():
         # Password correct.
         return True
 
-if check_password():
+import json
+
+def get_from_local_storage(k):
+    v = st_javascript(
+        f"JSON.parse(localStorage.getItem('{k}'));"
+    )
+    return v or {}
+
+
+def set_to_local_storage(k, v):
+    jdata = json.dumps(v)
+    st_javascript(
+        f"localStorage.setItem('{k}', JSON.stringify({jdata}));"
+    )
+
+if get_from_local_storage("password_correct"):
+    # skip pw checking
+    authenticated = True
+else:
+    authenticated = check_password()
+
+if authenticated:
+    set_to_local_storage("password_correct", True)
+    
     st.title("Download Music :D")
     st.write("Choose between downloading a single song where you will be able to select the exact song you'd like or batch \
             downloading songs which wil default to the first result of the query from YouTube. Videos over 10mins long will \
