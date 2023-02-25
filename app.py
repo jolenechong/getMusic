@@ -163,7 +163,7 @@ if authenticated:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            # 'geo_verification_proxy': 'http://proxy-server-singapore:8080', # TODO: need to replace this with a proxy server
+            'geo_verification_proxy': '128.106.14.227',
         }
 
         # set provide the path using --ffmpeg-location
