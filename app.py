@@ -246,6 +246,7 @@ if authenticated:
 
     with batchDownload:
         st.subheader("Batch Download (defaults to first result of query)")
+        st.write("Writing titles and the singer in the search bar will give you better results :D")
 
         getSongs = st.text_input("Songs to download (separate by comma)")
 
@@ -257,5 +258,5 @@ if authenticated:
                 options = searchYouTube(song)
 
                 # download song
-                st.write("Downloading song...")
-                downloadYTFromLink(options[0][3], options[0][1])
+                st.write("Getting song... (wait for a download button to appear :D)")
+                downloadYTFromLink(options[0][2], options[0][0])
