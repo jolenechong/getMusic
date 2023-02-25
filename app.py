@@ -167,18 +167,21 @@ if authenticated:
         }
 
         # set provide the path using --ffmpeg-location
-        # ydl_opts['ffmpeg_location'] = r'C:\ffmpeg\bin\ffmpeg.exe'
-        ydl_opts['ffmpeg_location'] = r"/usr/bin/ffmpeg"
+        ydl_opts['ffmpeg_location'] = r'C:\ffmpeg\bin\ffmpeg.exe'
+        # ydl_opts['ffmpeg_location'] = r"/usr/bin/ffmpeg"
         ydl_opts['outtmpl'] = 'song'
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.cache.remove()
                 ydl.download([link])
-        except:
+        except yt_dlp.utils.DownloadError as e:
             st.write("Error downloading song, try another link/song")
-            return
-
+            st.write("Error: " + str(e).replace('YouTube said', 'Youtube says'))
+        except Exception as e:
+            st.write("Error downloading song, try another link/song")
+            st.write("Error: " + str(e))
+            
         # send song to user
         st.audio("song.mp3")
 
